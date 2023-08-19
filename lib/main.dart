@@ -1,9 +1,16 @@
+import 'package:deu_mate_app/pages/AssignSubPage/AddAssignPage.dart';
 import 'package:deu_mate_app/pages/MainSubPage/HomePage.dart';
 import 'package:deu_mate_app/pages/MainSubPage/MapPage.dart';
-import 'package:deu_mate_app/pages/MainSubPage/TodoPage.dart';
+import 'package:deu_mate_app/pages/MainSubPage/AssignPage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:deu_mate_app/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -35,6 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _pageIdx = 1;
+  bool _fabVisible = false;
 
   final List<Widget> _pageWidgets = [
     const TodoPage(),
@@ -43,13 +51,14 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   final List<String> _pageNames = [
-    "Todo",
-    "Home",
-    "Map"
+    "과제",
+    "홈",
+    "교내지도"
   ];
 
   void _onItemTapped(int index) {
     setState(() {
+      _fabVisible = (index == 0);
       _pageIdx = index;
     });
   }
@@ -85,11 +94,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: Visibility(
+        visible: _fabVisible,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddAssignPage()),
+            );
+          },
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
+      )
     );
   }
 }
